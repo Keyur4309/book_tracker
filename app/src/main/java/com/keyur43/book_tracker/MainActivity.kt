@@ -6,8 +6,10 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Menu
@@ -26,6 +28,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.keyur43.book_tracker.ui.theme.Book_trackerTheme
+import com.keyur43.book_tracker.view.AppNavigation
 
 @ExperimentalMaterial3Api
 class MainActivity : ComponentActivity() {
@@ -34,6 +37,7 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             Book_trackerTheme {
+                AppNavigation()
                 var selectedTab by remember { mutableStateOf(0) } // Track selected tab
 
                 Scaffold(
@@ -55,13 +59,14 @@ class MainActivity : ComponentActivity() {
                         BottomBar(selectedTab) { selectedTab = it } // Add BottomBar here
                     }
                 ) { innerPadding ->
-                    BookGrid(modifier = Modifier.padding(innerPadding))
+                    LazyColumn(modifier = Modifier.padding(innerPadding)) {
+                        item { BookGrid() }
+                    }
                 }
             }
         }
     }
 }
-
 
 @Composable
 fun BottomBar(selectedTab: Int, onTabSelected: (Int) -> Unit) {
@@ -87,30 +92,52 @@ fun BottomBar(selectedTab: Int, onTabSelected: (Int) -> Unit) {
     }
 }
 
+// Define a data class for book categories
+data class BookCategory(val categoryName: String, val bookImages: List<Int>)
+
 @Composable
 fun BookGrid(modifier: Modifier = Modifier) {
-    // Replace with actual image resource IDs from your drawable folder
-    val books = listOf(
-        R.drawable.book_cover_1,
-        R.drawable.book_cover_2,
-        R.drawable.book_cover_3,
-        R.drawable.book_cover_4,
-        R.drawable.book_cover_5,
-        R.drawable.book_cover_6,
-        R.drawable.book_cover_7,
-        R.drawable.book_cover_8,
-        R.drawable.book_cover_9,
-        R.drawable.book_cover_10,
-        R.drawable.book_cover_11,
-        R.drawable.book_cover_12
+    // Define categories and their associated books
+    val categories = listOf(
+        BookCategory("Fiction", listOf(
+            R.drawable.book_cover_1,
+            R.drawable.book_cover_2,
+            R.drawable.book_cover_3
+        )),
+        BookCategory("Non-Fiction", listOf(
+            R.drawable.book_cover_4,
+            R.drawable.book_cover_5,
+            R.drawable.book_cover_6
+        )),
+        BookCategory("Science", listOf(
+            R.drawable.book_cover_7,
+            R.drawable.book_cover_8,
+            R.drawable.book_cover_9
+        )),
+        BookCategory("History", listOf(
+            R.drawable.book_cover_10,
+            R.drawable.book_cover_11,
+            R.drawable.book_cover_12
+        ))
     )
 
-    LazyVerticalGrid(
-        columns = GridCells.Fixed(3),
-        modifier = modifier.padding(16.dp)
-    ) {
-        items(books.size) { index ->
-            BookImage(bookImage = books[index])
+    // Iterate over each category and display the category name followed by the book images
+    Column(modifier = modifier.padding(8.dp)) {
+        categories.forEach { category ->
+            Text(
+                text = category.categoryName,
+                style = MaterialTheme.typography.titleLarge,
+                modifier = Modifier.padding(bottom = 4.dp)
+            )
+
+            LazyVerticalGrid(
+                columns = GridCells.Fixed(3),
+                modifier = Modifier.fillMaxWidth().height(200.dp) // Enables scrolling
+            ) {
+                items(category.bookImages) { bookImage ->
+                    BookImage(bookImage = bookImage)
+                }
+            }
         }
     }
 }
@@ -131,6 +158,7 @@ fun BookImage(bookImage: Int, modifier: Modifier = Modifier) {
 @Composable
 fun BookGridPreview() {
     Book_trackerTheme {
-        BookGrid()
+//       BookGrid()
+        AppNavigation()
     }
 }
