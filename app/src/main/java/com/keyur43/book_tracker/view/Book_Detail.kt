@@ -57,7 +57,7 @@ fun HomeScreen(navController : NavController, modifier: Modifier = Modifier)
             horizontalAlignment = Alignment.CenterHorizontally){
             Image(painter = painterResource(R.drawable.book_cover_1),
                 contentDescription = "Dice 1",
-                modifier.size(300.dp).
+                modifier.size(300.dp) .
                 clickable { navController.navigate("Book_Detail")
                 })
 
