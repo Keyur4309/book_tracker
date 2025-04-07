@@ -1,9 +1,9 @@
-package com.app.booktracker.di
+package com.keyur43.book_tracker.di
 
 import android.content.Context
 import androidx.room.Room
-import com.app.booktracker.db.ReadingTrackerDatabase
-import com.app.booktracker.network.GoogleBooksService
+import com.keyur43.book_tracker.db.ReadingTrackerDatabase
+import com.keyur43.book_tracker.network.GoogleBooksService
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
 import dagger.Module
@@ -26,18 +26,13 @@ object AppModule {
     @Provides
     fun provideRetrofit(): Retrofit {
         val moshi = Moshi.Builder().addLast(KotlinJsonAdapterFactory()).build()
-        return Retrofit.Builder()
-            .baseUrl("https://www.googleapis.com/books/v1/")
-            .addConverterFactory(MoshiConverterFactory.create(moshi))
-            .client(
+        return Retrofit.Builder().baseUrl("https://www.googleapis.com/books/v1/")
+            .addConverterFactory(MoshiConverterFactory.create(moshi)).client(
                 OkHttpClient.Builder()
                     .addInterceptor(HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY))
-                    .connectTimeout(1, TimeUnit.MINUTES)
-                    .writeTimeout(1, TimeUnit.MINUTES)
-                    .readTimeout(1, TimeUnit.MINUTES)
-                    .build()
-            )
-            .build()
+                    .connectTimeout(1, TimeUnit.MINUTES).writeTimeout(1, TimeUnit.MINUTES)
+                    .readTimeout(1, TimeUnit.MINUTES).build()
+            ).build()
     }
 
     @Singleton
@@ -48,10 +43,8 @@ object AppModule {
     @Singleton
     @Provides
     fun provideRoomDatabase(@ApplicationContext context: Context) = Room.databaseBuilder(
-        context,
-        ReadingTrackerDatabase::class.java,
-        "photoplay_db"
-    ).build()
+        context, ReadingTrackerDatabase::class.java, "photoplay_db"
+    ).fallbackToDestructiveMigration().build()
 
     @Singleton
     @Provides
